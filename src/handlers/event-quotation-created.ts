@@ -1,12 +1,11 @@
 import { DynamoDBClient, QueryCommand, ScanCommand } from '@aws-sdk/client-dynamodb';
-import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
+import { marshall } from '@aws-sdk/util-dynamodb';
 import { Handler } from 'aws-lambda';
 import TelegramBot from 'node-telegram-bot-api';
 import { DBQuotation } from '../types/quotation';
-import { GetParameterCommand, SSMClient } from '@aws-sdk/client-ssm';
+import { chunk, readSecret, sleep } from '../utils';
 
 const dynamoDBClient = new DynamoDBClient();
-const ssmClient = new SSMClient();
 
 export const handler: Handler = async (event) => {
   const { current, previous } = event.detail;
@@ -41,21 +40,4 @@ export const handler: Handler = async (event) => {
 
     await sleep(1100);
   }
-};
-
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
-function chunk<T>(arr: T[], chunkSize: number): T[][] {
-  const chunks = [];
-  for (let i = 0; i < arr.length; i += chunkSize) {
-    chunks.push(arr.slice(i, i + chunkSize));
-  }
-  return chunks;
-}
-
-const readSecret = async (secretName: string): Promise<string> => {
-  const { Parameter } = await ssmClient.send(new GetParameterCommand({ Name: secretName }));
-  if (!Parameter || !Parameter.Value) throw new Error('Secret not found');
-
-  return Parameter.Value;
 };
