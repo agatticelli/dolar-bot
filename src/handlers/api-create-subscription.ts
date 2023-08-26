@@ -5,9 +5,6 @@ import { marshall } from '@aws-sdk/util-dynamodb';
 const dynamoClient = new DynamoDBClient({});
 
 export const handler: APIGatewayProxyHandler = async (event) => {
-  // console.log('Received event:', JSON.stringify(event, null, 2));
-  // console.log('Body:', event.body);
-
   const { message: { from, text } } = JSON.parse(event.body!);
   if (text !== '/subscribe') {
     return {
