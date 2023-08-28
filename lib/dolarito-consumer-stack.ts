@@ -72,7 +72,7 @@ export class DolaritoConsumerStack extends Stack {
     new Rule(this, 'DolaritoCronPriceGetRule', {
       schedule: Schedule.cron({
         weekDay: 'MON-FRI',
-        hour: '10-17',
+        hour: '13-21',
       }),
     }).addTarget(new LambdaFunction(cronPriceGet));
 
