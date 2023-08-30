@@ -5,10 +5,9 @@
     "dolarito-consumer": "bin/dolarito-consumer.js"
   },
   "scripts": {
-    "build": "tsc",
-    "watch": "tsc -w",
-    "test": "jest",
-    "cdk": "cdk"
+    "build": "cdk synth",
+    "watch": "cdk deploy --watch",
+    "test": "jest"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.119",
