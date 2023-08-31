@@ -1,7 +1,7 @@
-import { GithubActionsIdentityProvider } from "aws-cdk-github-oidc";
+import { GithubActionsIdentityProvider, GithubActionsRole } from "aws-cdk-github-oidc";
 import { CfnOutput, Stack, StackProps } from 'aws-cdk-lib';
+import { Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { Construct } from 'constructs';
-import { GithubActionsRole } from "aws-cdk-github-oidc";
 
 export class PipelineStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
@@ -9,14 +9,27 @@ export class PipelineStack extends Stack {
 
     const provider = new GithubActionsIdentityProvider(this, "GithubProvider");
 
-    const uploadRole = new GithubActionsRole(this, "UploadRole", {
+    const deployRole = new GithubActionsRole(this, "UploadRole", {
       provider: provider,
       owner: "agatticelli",
       repo: "dolar-bot",
     });
 
+    deployRole.addToPolicy(
+      new PolicyStatement({
+        effect: Effect.ALLOW,
+        resources: ["*"],
+        actions: [
+          "cloudformation:CreateStack",
+          "cloudformation:DeleteStack",
+          "cloudformation:DescribeStacks",
+          "cloudformation:UpdateStack"
+        ],
+      })
+    );
+
     new CfnOutput(this, "UploadRoleArn", {
-      value: uploadRole.roleArn,
+      value: deployRole.roleArn,
     });
   }
 }
