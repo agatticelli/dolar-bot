@@ -33,7 +33,7 @@ export class DolaritoConsumerStack extends Stack {
       entry: `src/handlers/cron-price-get.ts`,
       functionName: 'do-cron-price-get',
       handler: 'handler',
-      runtime: Runtime.NODEJS_14_X,
+      runtime: Runtime.NODEJS_18_X,
       architecture: Architecture.ARM_64,
       timeout: Duration.seconds(15),
       environment: {
@@ -46,7 +46,7 @@ export class DolaritoConsumerStack extends Stack {
       entry: `src/handlers/event-quotation-created.ts`,
       functionName: 'do-event-quotation-created',
       handler: 'handler',
-      runtime: Runtime.NODEJS_14_X,
+      runtime: Runtime.NODEJS_18_X,
       architecture: Architecture.ARM_64,
       timeout: Duration.minutes(1),
       environment: {
@@ -59,7 +59,7 @@ export class DolaritoConsumerStack extends Stack {
       entry: `src/handlers/api-create-subscription.ts`,
       functionName: 'do-api-create-subscription',
       handler: 'handler',
-      runtime: Runtime.NODEJS_14_X,
+      runtime: Runtime.NODEJS_18_X,
       architecture: Architecture.ARM_64,
       environment: {
         TABLE_NAME: table.tableName,
