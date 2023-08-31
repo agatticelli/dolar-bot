@@ -1,4 +1,4 @@
-import { DynamoDBClient, QueryCommand, ScanCommand } from '@aws-sdk/client-dynamodb';
+import { DynamoDBClient, QueryCommand } from '@aws-sdk/client-dynamodb';
 import { marshall } from '@aws-sdk/util-dynamodb';
 import { Handler } from 'aws-lambda';
 import TelegramBot from 'node-telegram-bot-api';
