@@ -18,13 +18,12 @@ export class PipelineStack extends Stack {
     deployRole.addToPolicy(
       new PolicyStatement({
         effect: Effect.ALLOW,
-        resources: ["*"],
         actions: [
-          "cloudformation:CreateStack",
-          "cloudformation:DeleteStack",
-          "cloudformation:DescribeStacks",
-          "cloudformation:UpdateStack"
+          "sts:AssumeRole"
         ],
+        resources: [
+          "arn:aws:iam::*:role/cdk-*"
+        ]
       })
     );
 
