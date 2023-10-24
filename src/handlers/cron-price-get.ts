@@ -12,7 +12,7 @@ export async function handler(): Promise<void> {
   const dolaritoResponse = await axios.get('https://dolarito.ar/');
   const $ = load(dolaritoResponse.data);
   const text = $('script#__NEXT_DATA__').text();
-  const { buy, sell, variation, timestamp } = JSON.parse(text).props.pageProps.realTimeQuotations.quotations.deepBlue;
+  const { buy, sell, variation, timestamp } = JSON.parse(text).props.pageProps.realTimeQuotations.quotations.informal;
 
   const previousQuotation = await getPreviousQuotation(timestamp);
   if (previousQuotation?.buy === buy && previousQuotation?.sell === sell) return;
