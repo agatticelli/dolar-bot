@@ -45,4 +45,4 @@ jobs:
           role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
           aws-region: us-east-1
       - name: Deploy
-        run: npx cdk deplogiy --app "./cdk.out/assembly-Prod" --all --concurrency 10 --method=direct --require-approval never
+        run: npx cdk deploy --app "./cdk.out/assembly-Prod" --all --concurrency 10 --method=direct --require-approval never
