@@ -57,6 +57,7 @@ export class DolaritoConsumer extends Stack {
       architecture: Architecture.ARM_64,
       timeout: Duration.minutes(1),
       environment: {
+        NODE_ENV: props.envName,
         TABLE_NAME: table.tableName,
         TELEGRAM_BOT_SECRET: botTokenParam.parameterName,
       },
