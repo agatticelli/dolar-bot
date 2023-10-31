@@ -14,19 +14,15 @@ export async function handler(): Promise<void> {
   const text = $('script#__NEXT_DATA__').text();
   const { buy, sell, variation, timestamp } = JSON.parse(text).props.pageProps.realTimeQuotations.quotations.informal;
 
-  const parsedBuy = parseFloat(buy.replace(',', '.'));
-  const parsedSell = parseFloat(sell.replace(',', '.'));
-  const parsedVariation = parseFloat(variation.replace(',', '.'));
-
   const previousQuotation = await getPreviousQuotation(timestamp);
-  if (previousQuotation?.buy === parsedBuy && previousQuotation?.sell === parsedSell) return;
+  if (previousQuotation?.buy === buy && previousQuotation?.sell === sell) return;
 
   const quotation = {
     pk: 'QUOTATION#informal',
     sk: timestamp.toString(),
-    buy: parsedBuy,
-    sell: parsedSell,
-    variation: parsedVariation,
+    buy,
+    sell,
+    variation,
   };
   const putItemInput: PutItemCommandInput = {
     TableName: process.env.TABLE_NAME!,

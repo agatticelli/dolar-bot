@@ -7,31 +7,38 @@ import { LambdaFunction } from 'aws-cdk-lib/aws-events-targets';
 import { Table, AttributeType } from 'aws-cdk-lib/aws-dynamodb';
 import { EventBus } from 'aws-cdk-lib/aws-events';
 import { StringParameter } from 'aws-cdk-lib/aws-ssm';
+import { EnvName, getResourceNameBuilder } from '../utils/get-resource-name';
 
-export class DolaritoConsumerStack extends Stack {
-  constructor(scope: Construct, id: string, props?: StackProps) {
+interface DolaritoConsumerStackProps extends StackProps {
+  envName: EnvName;
+};
+
+export class DolaritoConsumer extends Stack {
+  constructor(scope: Construct, id: string, props: DolaritoConsumerStackProps) {
     super(scope, id, props);
 
-    const botTokenParam = new StringParameter(this, 'alerts-email-param', {
-      parameterName: '/dolarito/telegram-bot',
+    const getResourceName = getResourceNameBuilder(this);
+
+    const botTokenParam = new StringParameter(this, getResourceName('TelegramBotToken'), {
+      parameterName: `/${props.envName}/dolarito/telegram-bot`,
       stringValue: 'Complete this value in AWS console',
       description: 'Telegram Bot Token to send messages to subscribers',
     });
 
-    const eventBus = new EventBus(this, 'DolaritoEventBus', {
-      eventBusName: 'dolarito-event-bus',
+    const eventBus = new EventBus(this, getResourceName('EventBus'), {
+      eventBusName: `${props.envName}-dolarito-event-bus`,
     });
 
-    const table = new Table(this, 'DolaritoTable', {
-      tableName: 'dolarito-table',
+    const table = new Table(this, getResourceName('Table'), {
+      tableName: `${props.envName}-dolarito-table`,
       partitionKey: { name: 'pk', type: AttributeType.STRING },
       sortKey: { name: 'sk', type: AttributeType.STRING },
     });
 
     // lambdas
-    const cronPriceGet = new NodejsFunction(this, 'DolaritoCronPriceGet', {
+    const cronPriceGet = new NodejsFunction(this, getResourceName('CronPriceGet'), {
       entry: `src/handlers/cron-price-get.ts`,
-      functionName: 'do-cron-price-get',
+      functionName: `${props.envName}-do-cron-price-get`,
       handler: 'handler',
       runtime: Runtime.NODEJS_18_X,
       architecture: Architecture.ARM_64,
@@ -42,9 +49,9 @@ export class DolaritoConsumerStack extends Stack {
       },
     });
 
-    const eventQuotationCreated = new NodejsFunction(this, 'DolaritoEventQuotationCreated', {
+    const eventQuotationCreated = new NodejsFunction(this, getResourceName('EventQuotationCreated'), {
       entry: `src/handlers/event-quotation-created.ts`,
-      functionName: 'do-event-quotation-created',
+      functionName: `${props.envName}-do-event-quotation-created`,
       handler: 'handler',
       runtime: Runtime.NODEJS_18_X,
       architecture: Architecture.ARM_64,
@@ -55,9 +62,9 @@ export class DolaritoConsumerStack extends Stack {
       },
     });
 
-    const apiCreateSubscription = new NodejsFunction(this, 'DolaritoApiCreateSubscription', {
+    const apiCreateSubscription = new NodejsFunction(this, getResourceName('ApiCreateSubscription'), {
       entry: `src/handlers/api-create-subscription.ts`,
-      functionName: 'do-api-create-subscription',
+      functionName: `${props.envName}-do-api-create-subscription`,
       handler: 'handler',
       runtime: Runtime.NODEJS_18_X,
       architecture: Architecture.ARM_64,
@@ -69,14 +76,14 @@ export class DolaritoConsumerStack extends Stack {
     const subscribeFunctionUrl = apiCreateSubscription.addFunctionUrl({ authType: FunctionUrlAuthType.NONE });
 
     // event bridge rules
-    new Rule(this, 'DolaritoCronPriceGetRule', {
+    new Rule(this, getResourceName('CronPriceGetRule'), {
       schedule: Schedule.cron({
         weekDay: 'MON-FRI',
         hour: '13-21',
       }),
     }).addTarget(new LambdaFunction(cronPriceGet));
 
-    new Rule(this, 'DolaritoEventQuotationCreatedRule', {
+    new Rule(this, getResourceName('EventQuotationCreatedRule'), {
       eventBus,
       eventPattern: {
         source: ['dolarito-consumer'],
@@ -92,7 +99,7 @@ export class DolaritoConsumerStack extends Stack {
     botTokenParam.grantRead(eventQuotationCreated);
 
     // output
-    new CfnOutput(this, 'DolaritoSubscribeFn', {
+    new CfnOutput(this, getResourceName('SubscribeFn'), {
       value: subscribeFunctionUrl.url,
     });
   }
