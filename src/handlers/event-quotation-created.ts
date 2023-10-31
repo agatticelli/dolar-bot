@@ -20,7 +20,7 @@ export const handler: Handler = async (event) => {
     msg = `${previous.sell < sell ? '⬆️' : '⬇️'} ${msg}`;
   }
 
-  if (process.env.NODE_ENV !== 'production') {
+  if (process.env.NODE_ENV !== 'prod') {
     msg += `[${process.env.NODE_ENV}]\n`;
   }
 
