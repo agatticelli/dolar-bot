@@ -14,7 +14,8 @@ export const handler: Handler = async (event) => {
   const bot = new TelegramBot(telegramBotToken);
   const { buy, sell } = current as DBQuotation;
 
-  let msg = `Compra: *$${buy}*   \\|   Venta: *$${sell}*`;
+  let msg = process.env.NODE_ENV !== 'production' ? `[${process.env.NODE_ENV}]\n` : '';
+  msg += `Compra: *$${buy}*   \\|   Venta: *$${sell}*`;
 
   if (previous) {
     msg = `${previous.sell < sell ? '⬆️' : '⬇️'} ${msg}`;
