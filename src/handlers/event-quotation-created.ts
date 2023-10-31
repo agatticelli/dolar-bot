@@ -21,7 +21,7 @@ export const handler: Handler = async (event) => {
   }
 
   if (process.env.NODE_ENV !== 'prod') {
-    msg = `\[${process.env.NODE_ENV}\]\n${msg}`;
+    msg = `\\[${process.env.NODE_ENV}\\]\n${msg}`;
   }
 
   const subscriptionParams = {
