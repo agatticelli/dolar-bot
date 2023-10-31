@@ -25,7 +25,29 @@ jobs:
           name: cdk-out
           path: cdk.out
 
-  deploy-prod:
+  deploy-staging:
+    name: Deploy to staging
+    runs-on: ubuntu-latest
+    needs: build
+    environment: staging
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Download Artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: cdk-out
+          path: cdk.out
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: us-east-1
+      - name: Deploy
+        run: npx cdk deploy --app "./cdk.out/assembly-Staging" --all --concurrency 10 --method=direct --require-approval never
+
+  deploy-production:
     name: Deploy to production
     runs-on: ubuntu-latest
     needs: build
