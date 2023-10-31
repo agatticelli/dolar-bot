@@ -27,12 +27,12 @@ const app = new cdk.App();
 
 new PipelineStack(app, 'PipelineStack');
 
-// new DeployStage(app, 'Staging', {
-//   env: {
-//     account: process.env.CDK_DEFAULT_ACCOUNT,
-//   },
-//   envName: 'staging',
-// });
+new DeployStage(app, 'Staging', {
+  env: {
+    account: process.env.CDK_DEFAULT_ACCOUNT,
+  },
+  envName: 'staging',
+});
 
 new DeployStage(app, 'Prod', {
   env: {
