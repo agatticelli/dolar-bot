@@ -20,6 +20,10 @@ export const handler: Handler = async (event) => {
     msg = `${previous.sell < sell ? '⬆️' : '⬇️'} ${msg}`;
   }
 
+  if (process.env.NODE_ENV !== 'prod') {
+    msg = `\\[${process.env.NODE_ENV}\\]\n${msg}`;
+  }
+
   const subscriptionParams = {
     TableName: process.env.TABLE_NAME,
     KeyConditionExpression: 'pk = :pk and begins_with(sk, :sk)',
