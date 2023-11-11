@@ -29,7 +29,7 @@
     "@aws-sdk/client-ssm": "^3.398.0",
     "@aws-sdk/util-dynamodb": "^3.388.0",
     "aws-cdk-lib": "2.91.0",
-    "axios": "^1.4.0",
+    "axios": "^1.6.0",
     "cheerio": "^1.0.0-rc.12",
     "constructs": "^10.0.0",
     "node-telegram-bot-api": "^0.61.0"
